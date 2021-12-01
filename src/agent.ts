@@ -17,7 +17,6 @@ const handleTransaction: HandleTransaction = async (
 
   // Get all upgraded events
   const logs: LogDescription[] = txEvent.filterLog(UPGRADED_EVENT_ABI);
-  //console.log(logs);
 
   // Use the ethercan provider to review the bytecode of all upgraded
   // contracts

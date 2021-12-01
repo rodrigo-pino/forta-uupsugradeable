@@ -35,6 +35,7 @@ describe("proxy agent", () => {
 
   describe("testing contract", () => {
     it("returns empty findings if upgraded contract is not destroyed", async () => {
+      // a non-empty address
       const address = "0x222222222291749DE47895C0c0A9B17e4fcA8268";
       const mockTransaction = createTxEvent(address);
 
@@ -43,6 +44,7 @@ describe("proxy agent", () => {
       expect(findings).toStrictEqual([]);
     });
     it("returns and alert because contract has been destroyed", async () => {
+      // a self-destroyed address
       const address = "0x310fAC62C976d8F6FDFA34332a56EA1a05493b5b";
       const mockTransaction = createTxEvent(address);
 
