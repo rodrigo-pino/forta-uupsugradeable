@@ -25,16 +25,16 @@ const handleTransaction: HandleTransaction = async (
   // Check functions called in transaction to differentiate
   // between UUPSUpgradeable and Transparent Proxies
   // They have equal names but different modifiers!
-  const functions = txEvent.filterFunction([
-    UPGRADE_TO_ABI,
-    UPGRADE_TO_AND_CALL_ABI,
-  ]);
-  console.log(functions);
+  //const functions = txEvent.filterFunction([
+  //UPGRADE_TO_ABI,
+  //UPGRADE_TO_AND_CALL_ABI,
+  //]);
+  //console.log(functions);
   //if (functions.length === 0) return findings;
 
   // Get all upgraded events
   const logs: LogDescription[] = txEvent.filterLog(UPGRADED_EVENT_ABI);
-  console.log(logs);
+  //console.log(logs);
 
   // Use the ethercan provider to review the bytecode of all upgraded
   // contracts
@@ -43,13 +43,15 @@ const handleTransaction: HandleTransaction = async (
     process.env.ETHERSCAN_API_KEY
   );
 
-  logs.forEach(async (upgradedLog) => {
+  //logs.forEach((upgradedLog) => {
+  for (const upgradedLog of logs) {
     // retrieve the address of the upgraded event
     const contractAddress = upgradedLog.address;
 
     // get the bytecode of the contract at the retrieved address
     const byteCode = await etherscanProvider.getCode(contractAddress);
-
+    console.log(contractAddress);
+    console.log(byteCode.length);
     // A contract has 0x bytecode when destroyed
     if (byteCode === "0x") {
       // throw an alert!
@@ -63,7 +65,7 @@ const handleTransaction: HandleTransaction = async (
         })
       );
     }
-  });
+  }
 
   return findings;
 };
