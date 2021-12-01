@@ -26,13 +26,12 @@ const handleTransaction: HandleTransaction = async (
   logs.forEach(async (upgradedLog) => {
     const contractAddress = upgradedLog.address;
     const byteCode = await etherscanProvider.getCode(contractAddress);
-    if (byteCode == "0x") {
-      // report alert
+    if (byteCode === "0x") {
       findings.push(
         Finding.fromObject({
           name: "Name",
-          description: "description",
-          alertId: "an alert",
+          description: `Contract on ${contractAddress} self-destroyed`,
+          alertId: "UUPSUPGRADEABLE-DESTROYED-1",
           severity: FindingSeverity.High,
           type: FindingType.Degraded,
         })
