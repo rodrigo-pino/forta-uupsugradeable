@@ -1,8 +1,5 @@
-import BigNumber from "bignumber.js";
 import {
-  BlockEvent,
   Finding,
-  HandleBlock,
   HandleTransaction,
   TransactionEvent,
   FindingSeverity,
@@ -11,26 +8,12 @@ import {
   ethers,
 } from "forta-agent";
 
-import {
-  UPGRADED_EVENT_ABI,
-  UPGRADE_TO_ABI,
-  UPGRADE_TO_AND_CALL_ABI,
-} from "./constants";
+import { UPGRADED_EVENT_ABI } from "./constants";
 
 const handleTransaction: HandleTransaction = async (
   txEvent: TransactionEvent
 ) => {
   const findings: Finding[] = [];
-
-  // Check functions called in transaction to differentiate
-  // between UUPSUpgradeable and Transparent Proxies
-  // They have equal names but different modifiers!
-  //const functions = txEvent.filterFunction([
-  //UPGRADE_TO_ABI,
-  //UPGRADE_TO_AND_CALL_ABI,
-  //]);
-  //console.log(functions);
-  //if (functions.length === 0) return findings;
 
   // Get all upgraded events
   const logs: LogDescription[] = txEvent.filterLog(UPGRADED_EVENT_ABI);
