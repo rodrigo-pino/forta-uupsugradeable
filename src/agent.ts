@@ -32,8 +32,7 @@ const handleTransaction: HandleTransaction = async (
 
     // get the bytecode of the contract at the retrieved address
     const byteCode = await etherscanProvider.getCode(contractAddress);
-    console.log(contractAddress);
-    console.log(byteCode.length);
+
     // A contract has 0x bytecode when destroyed
     if (byteCode === "0x") {
       // throw an alert!
