@@ -3,46 +3,64 @@ import {
   FindingSeverity,
   Finding,
   HandleTransaction,
-  createTransactionEvent
-} from "forta-agent"
-import agent from "./agent"
+  createTransactionEvent,
+  getJsonRpcUrl,
+  ethers,
+  LogDescription,
+} from "forta-agent";
+import agent from "./agent";
+import { UPGRADED_EVENT_ABI } from "./constants";
 
-describe("high gas agent", () => {
-  let handleTransaction: HandleTransaction
+describe("proxy agent", () => {
+  let handleTransaction: HandleTransaction;
 
-  const createTxEventWithGasUsed = (gasUsed: string) => createTransactionEvent({
-    transaction: {} as any,
-    receipt: { gasUsed } as any,
-    block: {} as any,
-  })
+  const createTxEvent = (mockAddress: string) => {
+    const txEvent = createTransactionEvent({
+      transaction: {} as any,
+      receipt: {} as any,
+      block: {} as any,
+    });
+    txEvent.filterLog = () => [
+      {
+        eventFragment: {} as any,
+        name: {} as any,
+        signature: {} as any,
+        topic: {} as any,
+        args: {} as any,
+        address: mockAddress,
+      },
+    ];
+    return txEvent;
+  };
 
   beforeAll(() => {
-    handleTransaction = agent.handleTransaction
-  })
+    handleTransaction = agent.handleTransaction;
+  });
 
-  describe("handleTransaction", () => {
-    it("returns empty findings if gas used is below threshold", async () => {
-      const txEvent = createTxEventWithGasUsed("1")
+  describe("testing contract", () => {
+    it("returns empty findings if upgraded contract is not destroyed", async () => {
+      const address = "0x222222222291749DE47895C0c0A9B17e4fcA8268";
+      const mockTransaction = createTxEvent(address);
 
-      const findings = await handleTransaction(txEvent)
+      const findings = await handleTransaction(mockTransaction);
 
-      expect(findings).toStrictEqual([])
-    })
+      expect(findings).toStrictEqual([]);
+    });
+    it("returns and alert because contract has been destroyed", async () => {
+      const address = "0x310fAC62C976d8F6FDFA34332a56EA1a05493b5b";
+      const mockTransaction = createTxEvent(address);
 
-    it("returns a finding if gas used is above threshold", async () => {
-      const txEvent = createTxEventWithGasUsed("1000001")
-
-      const findings = await handleTransaction(txEvent)
+      const findings = await handleTransaction(mockTransaction);
 
       expect(findings).toStrictEqual([
         Finding.fromObject({
-          name: "High Gas Used",
-          description: `Gas Used: ${txEvent.gasUsed}`,
-          alertId: "FORTA-1",
+          name: "UUPSUpgradeable contract self-destroyed",
+          description: `UUPSUpgradeable contract on ${address} self-destroyed`,
+          alertId: "UUPSU-DESTROYED-1",
+          severity: FindingSeverity.High,
           type: FindingType.Suspicious,
-          severity: FindingSeverity.Medium
         }),
-      ])
-    })
-  })
-})
+      ]);
+    });
+  });
+});
