@@ -4,12 +4,8 @@ import {
   Finding,
   HandleTransaction,
   createTransactionEvent,
-  getJsonRpcUrl,
-  ethers,
-  LogDescription,
 } from "forta-agent";
 import agent from "./agent";
-import { UPGRADED_EVENT_ABI } from "./constants";
 
 describe("proxy agent", () => {
   let handleTransaction: HandleTransaction;
