@@ -7,7 +7,7 @@ import {
   LogDescription,
   ethers,
 } from "forta-agent";
-
+require("dotenv").config();
 import { UPGRADED_EVENT_ABI } from "./constants";
 
 const handleTransaction: HandleTransaction = async (
