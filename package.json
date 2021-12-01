@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "bignumber.js": "^9.0.1",
+    "dotenv": "^10.0.0",
     "forta-agent": "^0.0.32"
   },
   "devDependencies": {
